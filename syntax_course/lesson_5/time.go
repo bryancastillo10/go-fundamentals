@@ -1,18 +1,17 @@
 package main
 
-import (
-	"bufio"
-	"fmt"
-	"os"
-)
+import "fmt"
 
+// Array and Printing once the similar element
 func main() {
-	
-	const prefix = "Hello , "
-	fmt.Println("Please type your name")
-	text := bufio.NewScanner(os.Stdin);
-	text.Scan()
-	input := text.Text()
-	fmt.Printf(prefix + input)
-	
+	var array []string = []string {"Burger","Fries","Tapsilog","Siopao","Sisig","Palabok","Fries","Cheesecake","Tapsilog","Pancit"}
+
+	for i, element := range array {
+		for j := i + 1; j < len(array); j++ {
+			element2 := array[j]
+			if element2 == element {
+				fmt.Println(element)
+			}
+		}
+	}
 }
