@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 type Article struct {
@@ -27,16 +29,23 @@ func allArticles(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(articles)
 }
 
+func createArticles(w http.ResponseWriter, r *http.Request){
+	fmt.Fprintf(w,"Create Articles Endpoint Testing")
+}
+
 const PORT int64 = 3000
 func homePage(w http.ResponseWriter, r *http.Request){
 	fmt.Fprintf(w, "Server Homepage")
 }
 
 func handleRequests(){
-	http.HandleFunc("/", homePage)
-	http.HandleFunc("/articles",allArticles)
+	myRouter := mux.NewRouter().StrictSlash(true)
+
+	myRouter.HandleFunc("/", homePage)
+	myRouter.HandleFunc("/articles",allArticles).Methods("GET")
+	myRouter.HandleFunc("/articles",createArticles).Methods("POST")
 	fmt.Printf("Server is running at port %d\n",PORT)
-	log.Fatal(http.ListenAndServe(":3000",nil))
+	log.Fatal(http.ListenAndServe(":3000",myRouter))
 }
 
 func main(){
