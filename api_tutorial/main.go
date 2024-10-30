@@ -1,29 +1,44 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
-func main(){
-	const PORT int64 = 3000
-	mux := http.NewServeMux()
+type Article struct {
+	Title string `json:"Title"`
+	Desc string `json:"desc"`
+	Topic string `json:"content"`
+}
 
-	mux.HandleFunc("GET /comment", func(w http.ResponseWriter, r *http.Request){
-		fmt.Fprintf(w,"All comments can be returned")
-	})
+type Articles []Article
 
-	mux.HandleFunc("GET /comment/{id}", func(w http.ResponseWriter, r *http.Request){
-		id := r.PathValue("id")
-		fmt.Fprintf(w,"A path with id %s single comment is returned",id)
-	})
-
-		mux.HandleFunc("POST /comment", func(w http.ResponseWriter, r *http.Request){
-		fmt.Fprintf(w,"Post a new comment")
-	})
-
-	fmt.Printf("Server is running on port %d\n",PORT)
-	if err := http.ListenAndServe("localhost:3000",mux); err != nil {
-		fmt.Println(err.Error())
+func allArticles(w http.ResponseWriter, r *http.Request){
+	articles := Articles{
+		Article{
+			Title:"Sample Title",
+			Desc:"Sample description here to show some information",
+			Topic:"Learning GO Rest API"},
 	}
+
+	fmt.Println("Endpoint at All Articles")
+	json.NewEncoder(w).Encode(articles)
+}
+
+const PORT int64 = 3000
+func homePage(w http.ResponseWriter, r *http.Request){
+	fmt.Fprintf(w, "Server Homepage")
+}
+
+func handleRequests(){
+	http.HandleFunc("/", homePage)
+	http.HandleFunc("/articles",allArticles)
+	fmt.Printf("Server is running at port %d\n",PORT)
+	log.Fatal(http.ListenAndServe(":3000",nil))
+}
+
+func main(){
+	handleRequests()
 }
